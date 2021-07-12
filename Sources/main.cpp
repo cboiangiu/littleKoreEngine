@@ -1,16 +1,21 @@
-#include <Kore/System.h>
-#include <Kore/Math/Matrix.h>
-#include <Kore/Math/Vector.h>
+#include <Kore/global.h>
+
+#include "first_app.hpp"
+
+// std
+#include <cstdlib>
+#include <iostream>
+#include <stdexcept>
 
 int kickstart(int argc, char** argv) {
-	Kore::System::init("Kore window", 800, 600);
-
-    Kore::mat4 matrix;
-    Kore::vec4 vec;
+    lke::FirstApp app{};
     
-    auto test = matrix * vec;
-    
-	Kore::System::start();
+    try {
+        app.run();
+    } catch (const std::exception &e) {
+        std::cerr << e.what() << '\n';
+        return EXIT_FAILURE;
+    }
 
-	return 0;
+	return EXIT_SUCCESS;
 }
