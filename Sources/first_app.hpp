@@ -1,6 +1,7 @@
 #pragma once
 
 #include "lke_window.hpp"
+#include "lke_pipeline.hpp"
 
 namespace lke {
 class FirstApp {
@@ -11,6 +12,7 @@ public:
     void run();
 private:
     LkeWindow lkeWindow{WIDTH, HEIGHT, "Hello Kode!"};
+    LkePipeline lkePipeline{"simple_shader.vert", "simple_shader.frag"};
     
     static void update();
 };
