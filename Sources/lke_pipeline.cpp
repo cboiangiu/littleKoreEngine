@@ -22,6 +22,11 @@ void LkePipeline::createGraphicsPipeline(const std::string& vertFilepath, const 
     
     graphicsPipeline = new Kore::Graphics5::PipelineState();
     
+    Kore::Graphics4::VertexStructure structure;
+    graphicsPipeline->vertexShader = vertShader;
+    graphicsPipeline->fragmentShader = fragShader;
+    graphicsPipeline->inputLayout[0] = &structure;
+    
     // Start: configure pipeline from configInfo
     
     graphicsPipeline->cullMode = configInfo.cullMode;
@@ -58,11 +63,6 @@ void LkePipeline::createGraphicsPipeline(const std::string& vertFilepath, const 
     graphicsPipeline->stencilAttachmentBits = configInfo.stencilAttachmentBits;
 
     // End: configure pipeline from configInfo
-
-    Kore::Graphics4::VertexStructure structure;
-    graphicsPipeline->vertexShader = vertShader;
-    graphicsPipeline->fragmentShader = fragShader;
-    graphicsPipeline->inputLayout[0] = &structure;
 
     graphicsPipeline->compile();
 
