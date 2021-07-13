@@ -12,7 +12,7 @@ public:
     void run();
 private:
     LkeWindow lkeWindow{WIDTH, HEIGHT, "Hello Kode!"};
-    LkePipeline lkePipeline{"simple_shader.vert", "simple_shader.frag"};
+    LkePipeline lkePipeline{"simple_shader.vert", "simple_shader.frag", LkePipeline::defaultPipelineConfigInfo()};
     
     static void update();
 };

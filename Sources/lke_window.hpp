@@ -12,6 +12,9 @@ public:
     
     LkeWindow(const LkeWindow &) = delete;
     LkeWindow &operator=(const LkeWindow &) = delete;
+    
+    int getWidth() { return width; }
+    int getHeight() { return height; }
         
 private:
     void initWindow();

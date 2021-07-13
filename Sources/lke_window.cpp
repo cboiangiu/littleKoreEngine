@@ -12,12 +12,16 @@ LkeWindow::~LkeWindow() {
 }
 
 void LkeWindow::initWindow() {
-    Kore::WindowOptions options;
-    options.title = windowName.c_str();
-    options.width = width;
-    options.height = height;
-    options.windowFeatures = 0; // disable resize
+    Kore::WindowOptions windowOptions;
+    windowOptions.title = windowName.c_str();
+    windowOptions.width = width;
+    windowOptions.height = height;
+    windowOptions.windowFeatures = 0; // disable resize
     
-    window = Kore::System::init(options.title, options.width, options.height, &options);
+    Kore::FramebufferOptions framebufferOptions;
+    framebufferOptions.verticalSync = false; // disable vsync
+    
+    window = Kore::System::init(windowOptions.title, windowOptions.width, windowOptions.height, &windowOptions);
+    window->changeFramebuffer(&framebufferOptions);
 }
 }
