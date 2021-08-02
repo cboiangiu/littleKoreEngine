@@ -2,8 +2,7 @@
 
 #include <Kore/Graphics5/Graphics.h>
 
-// std lib headers
-#include <string>
+// std
 #include <vector>
 
 namespace lke {

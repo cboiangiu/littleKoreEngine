@@ -1,14 +1,5 @@
 #include "lke_swap_chain.hpp"
 
-// std
-#include <array>
-#include <cstdlib>
-#include <cstring>
-#include <iostream>
-#include <limits>
-#include <set>
-#include <stdexcept>
-
 namespace lke {
 LkeSwapChain::LkeSwapChain(int windowWidth, int windowHeight) : swapChainWidth{windowWidth}, swapChainHeight{windowHeight} {
     createFramebuffers();

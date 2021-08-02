@@ -4,7 +4,6 @@
 #include "lke_utils.hpp"
 
 // std
-#include <array>
 #include <stdexcept>
 
 namespace lke{

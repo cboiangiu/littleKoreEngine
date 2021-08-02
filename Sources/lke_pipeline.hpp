@@ -4,8 +4,8 @@
 #include <Kore/Graphics5/PipelineState.h>
 #include <Kore/Graphics5/Shader.h>
 
+// std
 #include <string>
-#include <vector>
 
 namespace lke {
 struct PipelineConfigInfo {
