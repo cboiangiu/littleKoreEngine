@@ -25,4 +25,4 @@ private:
     std::string windowName;
     Kore::Window *window;
 };
-} // namespace lke
+}

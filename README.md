@@ -16,6 +16,11 @@ $ cd build
 ```
 - More build info available here : https://github.com/Kode/Kinc
 
+## Compile shaders
+```
+$ node Kore/make --onlyshaders
+```
+
 ## Credits
 
 Inspired by [Brendan Galea](https://www.youtube.com/channel/UC9pXmjxsQHeFH9vgCeRsHcw) and [littleVulkanEngine](https://github.com/blurrypiano/littleVulkanEngine).

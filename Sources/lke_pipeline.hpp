@@ -1,5 +1,6 @@
 #pragma once
 
+#include <Kore/Graphics5/CommandList.h>
 #include <Kore/Graphics5/PipelineState.h>
 #include <Kore/Graphics5/Shader.h>
 
@@ -27,10 +28,10 @@ struct PipelineConfigInfo {
     bool colorWriteMaskBlue[8];
     bool colorWriteMaskAlpha[8];
     int colorAttachmentCount;
-    Kore::Graphics5::RenderTargetFormat colorAttachment[8];
     int depthAttachmentBits;
     int stencilAttachmentBits;
     bool conservativeRasterization;
+    Kore::Graphics5::RenderTargetFormat colorAttachmentsFormat;
 };
 
 class LkePipeline {
@@ -40,6 +41,8 @@ public:
     
     LkePipeline(const LkePipeline &) = delete;
     void operator=(const LkePipeline &) = delete;
+    
+    Kore::Graphics5::PipelineState* getPipeline() { return graphicsPipeline; }
     
     static PipelineConfigInfo defaultPipelineConfigInfo();
     

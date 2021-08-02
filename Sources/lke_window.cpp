@@ -19,9 +19,8 @@ void LkeWindow::initWindow() {
     windowOptions.windowFeatures = 0; // disable resize
     
     Kore::FramebufferOptions framebufferOptions;
-    framebufferOptions.verticalSync = false; // disable vsync
+//    framebufferOptions.verticalSync = false;
     
-    window = Kore::System::init(windowOptions.title, windowOptions.width, windowOptions.height, &windowOptions);
-    window->changeFramebuffer(&framebufferOptions);
+    window = Kore::System::init(windowOptions.title, windowOptions.width, windowOptions.height, &windowOptions, &framebufferOptions);
 }
 }

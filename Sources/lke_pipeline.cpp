@@ -28,7 +28,6 @@ void LkePipeline::createGraphicsPipeline(const std::string& vertFilepath, const 
     graphicsPipeline->inputLayout[0] = &structure;
     
     // Start: configure pipeline from configInfo
-    
     graphicsPipeline->cullMode = configInfo.cullMode;
     
     graphicsPipeline->depthWrite = configInfo.depthWrite;
@@ -54,14 +53,15 @@ void LkePipeline::createGraphicsPipeline(const std::string& vertFilepath, const 
         graphicsPipeline->colorWriteMaskAlpha[i] = configInfo.colorWriteMaskRed[i];
     }
 
-    graphicsPipeline->colorAttachmentCount = 1;
+    graphicsPipeline->colorAttachmentCount = configInfo.colorAttachmentCount;
     for (int i = 0; i < 8; ++i) {
-        graphicsPipeline->colorAttachment[i] = configInfo.colorAttachment[i];
+        graphicsPipeline->colorAttachment[i] = configInfo.colorAttachmentsFormat;
     }
 
     graphicsPipeline->depthAttachmentBits = configInfo.depthAttachmentBits;
     graphicsPipeline->stencilAttachmentBits = configInfo.stencilAttachmentBits;
-
+    
+    graphicsPipeline->conservativeRasterization = configInfo.conservativeRasterization;
     // End: configure pipeline from configInfo
 
     graphicsPipeline->compile();
@@ -72,13 +72,13 @@ void LkePipeline::createGraphicsPipeline(const std::string& vertFilepath, const 
 
 PipelineConfigInfo LkePipeline::defaultPipelineConfigInfo() {
     PipelineConfigInfo configInfo{};
-        
+
     configInfo.cullMode = Kore::Graphics5::NoCulling;
 
-    configInfo.depthWrite = false;
-    configInfo.depthMode = Kore::Graphics5::ZCompareAlways;
+    configInfo.depthWrite = true;
+    configInfo.depthMode = Kore::Graphics5::ZCompareLess;
 
-    configInfo.stencilMode = Kore::Graphics5::ZCompareAlways;
+    configInfo.stencilMode = Kore::Graphics5::ZCompareLess;
     configInfo.stencilBothPass = Kore::Graphics5::Keep;
     configInfo.stencilDepthFail = Kore::Graphics5::Keep;
     configInfo.stencilFail = Kore::Graphics5::Keep;
@@ -99,12 +99,12 @@ PipelineConfigInfo LkePipeline::defaultPipelineConfigInfo() {
     }
 
     configInfo.colorAttachmentCount = 1;
-    for (int i = 0; i < 8; ++i) {
-        configInfo.colorAttachment[i] = Kore::Graphics5::Target32Bit;
-    }
+    configInfo.colorAttachmentsFormat = Kore::Graphics5::Target32Bit;
 
     configInfo.depthAttachmentBits = 0;
     configInfo.stencilAttachmentBits = 0;
+    
+    configInfo.conservativeRasterization = false;
     
     return configInfo;
 }

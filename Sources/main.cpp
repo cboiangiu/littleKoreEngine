@@ -8,10 +8,8 @@
 #include <stdexcept>
 
 int kickstart(int argc, char** argv) {
-    lke::FirstApp app{};
-    
     try {
-        app.run();
+        lke::FirstApp::instance()->run();
     } catch (const std::exception &e) {
         std::cerr << e.what() << '\n';
         return EXIT_FAILURE;
