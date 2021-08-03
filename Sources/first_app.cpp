@@ -53,7 +53,7 @@ void FirstApp::drawFrame() {
     commandList->framebufferToRenderTargetBarrier(currentBuffer);
     commandList->setRenderTargets(&currentBuffer, 1);
 
-    commandList->clear(currentBuffer, Kore::Graphics5::ClearColorFlag, lke::LkeUtils::convertColor(0.1f, 0.1f, 0.1f, 1.0f), 1.0f, 0);
+    commandList->clear(currentBuffer, Kore::Graphics5::ClearColorFlag, lke::LkeUtils::convertColor(0.1f, 1.0f, 1.0f, 1.0f), 1.0f, 0);
     commandList->setPipeline(lkePipeline->getPipeline());
     commandList->setPipelineLayout();
 
