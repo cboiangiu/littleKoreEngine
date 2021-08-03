@@ -1,5 +1,7 @@
 # littleKoreEngine
 
+Learning cross-platform computer graphics.
+
 ## Prerequisites
 
 - This project requires Node.js to build.
