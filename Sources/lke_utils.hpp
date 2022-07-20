@@ -16,16 +16,6 @@ struct LkeExtent2D
 class LkeUtils
 {
 public:
-    static Kore::mat4 mat4Initialized(float value)
-    {
-        auto mat = Kore::mat4{};
-        mat.Set(0, 0, value); mat.Set(0, 1, value); mat.Set(0, 2, value); mat.Set(0, 3, value);
-        mat.Set(1, 0, value); mat.Set(1, 1, value); mat.Set(1, 2, value); mat.Set(1, 3, value);
-        mat.Set(2, 0, value); mat.Set(2, 1, value); mat.Set(2, 2, value); mat.Set(2, 3, value);
-        mat.Set(3, 0, value); mat.Set(3, 1, value); mat.Set(3, 2, value); mat.Set(3, 3, value);
-        return mat;
-    }
-
     static unsigned int convertColor(float r, float g, float b, float a)
     {
         int red = Kore::clamp((int)Kore::floor(r * 256.0), 0, 255);

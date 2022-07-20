@@ -28,14 +28,9 @@ public:
     {
         return viewMatrix;
     }
-    const Kore::mat4& getInverseView() const
-    {
-        return inverseViewMatrix;
-    }
 
 private:
-    Kore::mat4 projectionMatrix = LkeUtils::mat4Initialized(1.f);
-    Kore::mat4 viewMatrix = LkeUtils::mat4Initialized(1.f);
-    Kore::mat4 inverseViewMatrix = LkeUtils::mat4Initialized(1.f);
+    Kore::mat4 projectionMatrix = Kore::mat4::Identity();
+    Kore::mat4 viewMatrix = Kore::mat4::Identity();
 };
 }

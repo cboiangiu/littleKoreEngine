@@ -15,8 +15,6 @@ namespace lke
 FirstApp::FirstApp()
 {
     loadGameObjects();
-
-    viewerObject.transform.translation.set(.0f, .0f, -2.5f);
 }
 
 FirstApp::~FirstApp()
@@ -25,6 +23,8 @@ FirstApp::~FirstApp()
 
 void FirstApp::run()
 {
+    Kore::Keyboard::the()->KeyDown = keyDownCallback;
+    Kore::Keyboard::the()->KeyUp = keyUpCallback;
     Kore::System::setCallback(updateCallback);
     // set more callbacks for key events here
     currentTime = std::chrono::high_resolution_clock::now();
@@ -36,15 +36,25 @@ void FirstApp::updateCallback()
     FirstApp::instance()->update();
 }
 
+void FirstApp::keyDownCallback(Kore::KeyCode keyCode)
+{
+    FirstApp::instance()->keysPressed.insert(keyCode);
+}
+
+void FirstApp::keyUpCallback(Kore::KeyCode keyCode)
+{
+    FirstApp::instance()->keysPressed.erase(keyCode);
+}
+
 void FirstApp::loadGameObjects()
 {
     std::shared_ptr<LkeModel> lkeModel = LkeModel::createModelFromFile(
-        "/Users/catalinboiangiu/Documents/Projects/littleKoreEngine/Sources/models/flat_vase.obj");
-    auto flatVase = LkeGameObject::createGameObject();
-    flatVase.model = lkeModel;
-    flatVase.transform.translation = {-.5f, .5f, 0.f};
-    flatVase.transform.scale = {3.f, 1.5f, 3.f};
-    gameObjects.emplace(flatVase.getId(), std::move(flatVase));
+        "/Users/catalinboiangiu/Documents/Projects/littleKoreEngine/Sources/models/FinalBaseMesh.obj");
+    auto obj = LkeGameObject::createGameObject();
+    obj.model = lkeModel;
+    obj.transform.translation = {.0f, .0f, 2.5f};
+    obj.transform.scale = {3.f, 3.f, 3.f};
+    gameObjects.emplace(obj.getId(), std::move(obj));
 }
 
 void FirstApp::update()
@@ -54,10 +64,11 @@ void FirstApp::update()
         = std::chrono::duration<float, std::chrono::seconds::period>(newTime - currentTime).count();
     currentTime = newTime;
 
+    cameraController.moveInPlaneXZ(keysPressed, frameTime, viewerObject);
     camera.setViewYXZ(viewerObject.transform.translation, viewerObject.transform.rotation);
 
     float aspect = lkeRenderer.getAspectRatio();
-    camera.setPerspectiveProjection(50.f * Kore::pi / 180, aspect, 0.1f, 100.f);
+    camera.setPerspectiveProjection(50.f * Kore::pi / 180, aspect, 0.1f, 500.f);
 
     if (auto commandList = lkeRenderer.beginFrame())
     {

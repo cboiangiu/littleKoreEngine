@@ -1,5 +1,8 @@
 #pragma once
 
+#include <Kore/Input/Keyboard.h>
+
+#include "keyboard_movement_controller.hpp"
 #include "lke_game_object.hpp"
 #include "lke_renderer.hpp"
 #include "lke_window.hpp"
@@ -9,6 +12,7 @@
 // std
 #include <memory>
 #include <vector>
+#include <set>
 #include <chrono>
 
 namespace lke
@@ -35,6 +39,8 @@ public:
 private:
     FirstApp();
     static void updateCallback();
+    static void keyDownCallback(Kore::KeyCode keyCode);
+    static void keyUpCallback(Kore::KeyCode keyCode);
 
     void loadGameObjects();
     void update();
@@ -48,7 +54,10 @@ private:
     SimpleRenderSystem simpleRenderSystem;
     LkeCamera camera{};
     LkeGameObject viewerObject = LkeGameObject::createGameObject();
+    KeyboardMovementController cameraController{};
 
     std::chrono::time_point<std::chrono::high_resolution_clock> currentTime;
+    
+    std::set<Kore::KeyCode> keysPressed;
 };
 }
