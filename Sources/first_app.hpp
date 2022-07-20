@@ -1,45 +1,54 @@
 #pragma once
 
-#include <Kore/Graphics5/CommandList.h>
-
+#include "lke_game_object.hpp"
+#include "lke_renderer.hpp"
 #include "lke_window.hpp"
-#include "lke_pipeline.hpp"
-#include "lke_swap_chain.hpp"
+#include "lke_camera.hpp"
+#include "systems/simple_render_system.hpp"
 
 // std
 #include <memory>
+#include <vector>
+#include <chrono>
 
-namespace lke {
-class FirstApp {
+namespace lke
+{
+class FirstApp
+{
 public:
     static constexpr int WIDTH = 800;
     static constexpr int HEIGHT = 600;
 
     ~FirstApp();
-    
-    static std::shared_ptr<FirstApp> instance() {
-        static std::shared_ptr<FirstApp> s{new FirstApp};
+
+    static std::shared_ptr<FirstApp> instance()
+    {
+        static std::shared_ptr<FirstApp> s{ new FirstApp };
         return s;
     }
-        
-    FirstApp(const FirstApp &) = delete;
-    FirstApp &operator=(const FirstApp &) = delete;
+
+    FirstApp(const FirstApp&) = delete;
+    FirstApp& operator=(const FirstApp&) = delete;
 
     void run();
 
 private:
     FirstApp();
+    static void updateCallback();
 
-    void createPipeline();
-    void drawFrame();
+    void loadGameObjects();
+    void update();
 
-    LkeWindow lkeWindow{WIDTH, HEIGHT, "Hello Kode!"};
-    LkeSwapChain lkeSwapChain{lkeWindow.getWidth(), lkeWindow.getHeight()};
-    std::unique_ptr<LkePipeline> lkePipeline;
+    LkeWindow lkeWindow{ WIDTH, HEIGHT, "Hello Kode!" };
+    LkeRenderer lkeRenderer{ lkeWindow };
 
-    Kore::Graphics5::CommandList* commandList;
-    Kore::Graphics5::IndexBuffer* indices;
-    
-    static void update();
+    // note: order of declarations matters
+    LkeGameObject::Map gameObjects;
+
+    SimpleRenderSystem simpleRenderSystem;
+    LkeCamera camera{};
+    LkeGameObject viewerObject = LkeGameObject::createGameObject();
+
+    std::chrono::time_point<std::chrono::high_resolution_clock> currentTime;
 };
 }

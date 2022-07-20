@@ -1,11 +1,18 @@
 #version 450
 
-vec2 positions[3] = vec2[](
-  vec2(-0.5, -0.5),
-  vec2(0.5, -0.5),
-  vec2(0.0, 0.5)
-);
+layout(location = 0) in vec3 position;
+layout(location = 1) in vec3 color;
 
-void main() {
-  gl_Position = vec4(positions[gl_VertexID], 0.0, 1.0);
+layout(location = 0) out vec3 fragColor;
+
+layout(set = 0, binding = 0) uniform Model
+{
+    mat4 transform;
+}
+model;
+
+void main()
+{
+    gl_Position = model.transform * vec4(position, 1.0);
+    fragColor = color;
 }

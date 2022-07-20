@@ -3,12 +3,16 @@
 #include <Kore/Graphics5/CommandList.h>
 #include <Kore/Graphics5/PipelineState.h>
 #include <Kore/Graphics5/Shader.h>
+#include <Kore/Graphics5/CommandList.h>
+#include <Kore/Graphics5/VertexStructure.h>
 
 // std
 #include <string>
 
-namespace lke {
-struct PipelineConfigInfo {
+namespace lke
+{
+struct PipelineConfigInfo
+{
     Kore::Graphics5::CullMode cullMode;
     bool depthWrite;
     Kore::Graphics5::ZCompareMode depthMode;
@@ -34,23 +38,25 @@ struct PipelineConfigInfo {
     Kore::Graphics5::RenderTargetFormat colorAttachmentsFormat;
 };
 
-class LkePipeline {
+class LkePipeline
+{
 public:
-    LkePipeline(const std::string& vertFilepath, const std::string& fragFilepath, const PipelineConfigInfo& configInfo);
+    LkePipeline(const std::string& vertFilepath, const std::string& fragFilepath,
+        const PipelineConfigInfo& configInfo);
     ~LkePipeline();
-    
-    LkePipeline(const LkePipeline &) = delete;
-    void operator=(const LkePipeline &) = delete;
-    
-    Kore::Graphics5::PipelineState* getPipeline() { return graphicsPipeline; }
-    
-    static PipelineConfigInfo defaultPipelineConfigInfo();
-    
+
+    LkePipeline(const LkePipeline&) = delete;
+    void operator=(const LkePipeline&) = delete;
+
+    void bind(Kore::Graphics5::CommandList* list);
+
+    static void defaultPipelineConfigInfo(PipelineConfigInfo& configInfo);
+    static void enableAlphaBlending(PipelineConfigInfo& configInfo);
+
 private:
-    static Kore::Graphics5::Shader* readAndCreateShader(const std::string& filepath, Kore::Graphics5::ShaderType type);
-    
-    void createGraphicsPipeline(const std::string& vertFilepath, const std::string& fragFilepath, const PipelineConfigInfo& configInfo);
-    
+    static Kore::Graphics5::Shader* readAndCreateShader(
+        const std::string& filepath, Kore::Graphics5::ShaderType type);
+
     Kore::Graphics5::PipelineState* graphicsPipeline;
 };
 }

@@ -2,66 +2,79 @@
 
 #include "first_app.hpp"
 #include "lke_utils.hpp"
+#include "lke_frame_info.hpp"
 
 // std
+#include <array>
+#include <cassert>
 #include <stdexcept>
 
-namespace lke{
-FirstApp::FirstApp() {
-    createPipeline();
-    
-    commandList = new Kore::Graphics5::CommandList;
-    
-    indices = new Kore::Graphics5::IndexBuffer(3, true);
-    int* i = indices->lock();
-    i[0] = 0; i[1] = 1; i[2] = 2; // for our shader hardcoded vertices
-    indices->unlock();
-    commandList->upload(indices);
-    commandList->setIndexBuffer(*indices);
+namespace lke
+{
+
+FirstApp::FirstApp()
+{
+    loadGameObjects();
+
+    viewerObject.transform.translation.set(.0f, .0f, -2.5f);
 }
 
-FirstApp::~FirstApp() {
-    delete commandList;
-    delete indices;
+FirstApp::~FirstApp()
+{
 }
 
-void FirstApp::run() {
-    Kore::System::setCallback(update);
+void FirstApp::run()
+{
+    Kore::System::setCallback(updateCallback);
     // set more callbacks for key events here
+    currentTime = std::chrono::high_resolution_clock::now();
     Kore::System::start();
 }
 
-void FirstApp::update() {
-    FirstApp::instance()->drawFrame();
+void FirstApp::updateCallback()
+{
+    FirstApp::instance()->update();
 }
 
-void FirstApp::createPipeline() {
-    auto pipelineConfig = LkePipeline::defaultPipelineConfigInfo();
-    pipelineConfig.colorAttachmentsFormat = lkeSwapChain.getSwapChainFramebufferFormat();
-    lkePipeline = std::make_unique<LkePipeline>("simple_shader.vert", "simple_shader.frag", pipelineConfig);
+void FirstApp::loadGameObjects()
+{
+    std::shared_ptr<LkeModel> lkeModel = LkeModel::createModelFromFile(
+        "/Users/catalinboiangiu/Documents/Projects/littleKoreEngine/Sources/models/flat_vase.obj");
+    auto flatVase = LkeGameObject::createGameObject();
+    flatVase.model = lkeModel;
+    flatVase.transform.translation = {-.5f, .5f, 0.f};
+    flatVase.transform.scale = {3.f, 1.5f, 3.f};
+    gameObjects.emplace(flatVase.getId(), std::move(flatVase));
 }
 
-void FirstApp::drawFrame() {
-    int bufferIndex;
-    if (!lkeSwapChain.acquireNextBuffer(bufferIndex)) {
-        throw std::runtime_error("failed to acquire swap chain buffer!");
+void FirstApp::update()
+{
+    auto newTime = std::chrono::high_resolution_clock::now();
+    float frameTime
+        = std::chrono::duration<float, std::chrono::seconds::period>(newTime - currentTime).count();
+    currentTime = newTime;
+
+    camera.setViewYXZ(viewerObject.transform.translation, viewerObject.transform.rotation);
+
+    float aspect = lkeRenderer.getAspectRatio();
+    camera.setPerspectiveProjection(50.f * Kore::pi / 180, aspect, 0.1f, 100.f);
+
+    if (auto commandList = lkeRenderer.beginFrame())
+    {
+        int frameIndex = lkeRenderer.getFrameIndex();
+        FrameInfo frameInfo{ frameIndex, frameTime, commandList, camera, gameObjects };
+
+        // update
+        // nothing...
+
+        // render
+        lkeRenderer.beginFrameBufferRenderPass(commandList);
+
+        // order here matters
+        simpleRenderSystem.renderGameObjects(frameInfo);
+
+        lkeRenderer.endFrameBufferRenderPass(commandList);
+        lkeRenderer.endFrame();
     }
-    
-    auto currentBuffer = lkeSwapChain.getFrameBuffer(bufferIndex);
-    
-    commandList->begin();
-    commandList->framebufferToRenderTargetBarrier(currentBuffer);
-    commandList->setRenderTargets(&currentBuffer, 1);
-
-    commandList->clear(currentBuffer, Kore::Graphics5::ClearColorFlag, lke::LkeUtils::convertColor(0.1f, 1.0f, 1.0f, 1.0f), 1.0f, 0);
-    commandList->setPipeline(lkePipeline->getPipeline());
-    commandList->setPipelineLayout();
-
-    commandList->drawIndexedVertices();
-
-    commandList->renderTargetToFramebufferBarrier(currentBuffer);
-    commandList->end();
-    
-    lkeSwapChain.submitBuffer();
 }
 }

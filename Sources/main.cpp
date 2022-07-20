@@ -4,15 +4,20 @@
 
 // std
 #include <iostream>
+
 #include <stdexcept>
 
-int kickstart(int argc, char** argv) {
-    try {
+int kickstart(int argc, char** argv)
+{
+    try
+    {
         lke::FirstApp::instance()->run();
-    } catch (const std::exception &e) {
+    }
+    catch (const std::exception& e)
+    {
         std::cerr << e.what() << '\n';
         return EXIT_FAILURE;
     }
 
-	return EXIT_SUCCESS;
+    return EXIT_SUCCESS;
 }
