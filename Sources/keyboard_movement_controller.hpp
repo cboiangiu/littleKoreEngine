@@ -18,8 +18,8 @@ namespace lke
             Kore::KeyCode moveRight = Kore::KeyCode::KeyD;
             Kore::KeyCode moveForward = Kore::KeyCode::KeyW;
             Kore::KeyCode moveBackward = Kore::KeyCode::KeyS;
-            Kore::KeyCode moveUp = Kore::KeyCode::KeyE;
-            Kore::KeyCode moveDown = Kore::KeyCode::KeyQ;
+            Kore::KeyCode moveUp = Kore::KeyCode::KeyQ;
+            Kore::KeyCode moveDown = Kore::KeyCode::KeyE;
             Kore::KeyCode lookLeft = Kore::KeyCode::KeyLeft;
             Kore::KeyCode lookRight = Kore::KeyCode::KeyRight;
             Kore::KeyCode lookUp = Kore::KeyCode::KeyUp;

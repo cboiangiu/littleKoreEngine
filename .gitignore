@@ -1,6 +1,7 @@
 /build/
 /Deployment/*
 !.gitkeep
+!/Deployment/models/
 
 # macOS:
 # General

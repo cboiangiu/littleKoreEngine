@@ -1,7 +1,7 @@
 #include "lke_model.hpp"
 #include "lke_utils.hpp"
 
-// libs
+#include <Kore/IO/FileReader.h>
 #define TINYOBJLOADER_IMPLEMENTATION
 #include "external/tinyobjloader/tiny_obj_loader.h"
 
@@ -129,8 +129,11 @@ void LkeModel::Builder::loadModel(const std::string& filepath)
     std::vector<tinyobj::shape_t> shapes;
     std::vector<tinyobj::material_t> materials;
     std::string warn, err;
+    
+    Kore::FileReader model(filepath.c_str());
+    imemstream in(static_cast<char*>(model.readAll()), model.size());
 
-    if (!tinyobj::LoadObj(&attrib, &shapes, &materials, &warn, &err, filepath.c_str()))
+    if (!tinyobj::LoadObj(&attrib, &shapes, &materials, &warn, &err, &in))
     {
         throw std::runtime_error(warn + err);
     }

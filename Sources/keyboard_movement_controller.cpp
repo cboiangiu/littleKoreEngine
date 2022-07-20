@@ -16,9 +16,9 @@ namespace lke
         if (wasKeyPressed(keys.lookLeft, keyCodes))
             rotate.y() -= 1.f;
         if (wasKeyPressed(keys.lookUp, keyCodes))
-            rotate.x() += 1.f;
-        if (wasKeyPressed(keys.lookDown, keyCodes))
             rotate.x() -= 1.f;
+        if (wasKeyPressed(keys.lookDown, keyCodes))
+            rotate.x() += 1.f;
 
         if (rotate.dot(rotate) > std::numeric_limits<float>::epsilon())
         {

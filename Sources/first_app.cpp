@@ -48,8 +48,7 @@ void FirstApp::keyUpCallback(Kore::KeyCode keyCode)
 
 void FirstApp::loadGameObjects()
 {
-    std::shared_ptr<LkeModel> lkeModel = LkeModel::createModelFromFile(
-        "/Users/catalinboiangiu/Documents/Projects/littleKoreEngine/Sources/models/FinalBaseMesh.obj");
+    std::shared_ptr<LkeModel> lkeModel = LkeModel::createModelFromFile("models/cube.obj");
     auto obj = LkeGameObject::createGameObject();
     obj.model = lkeModel;
     obj.transform.translation = {.0f, .0f, 2.5f};

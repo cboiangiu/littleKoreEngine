@@ -13,14 +13,14 @@ $ git clone https://github.com/cboiangiu/littleKoreEngine.git --recursive
 
 ## Build solution
 ```
-$ node Kore/make
+$ sh Kore/make
 $ cd build
 ```
 - More build info available here : https://github.com/Kode/Kinc
 
 ## Compile shaders
 ```
-$ node Kore/make --onlyshaders
+$ sh Kore/make --onlyshaders
 ```
 
 ## Credits

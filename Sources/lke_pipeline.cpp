@@ -34,10 +34,10 @@ namespace lke
         graphicsPipeline->stencilReadMask = configInfo.stencilReadMask;
         graphicsPipeline->stencilWriteMask = configInfo.stencilWriteMask;
 
-        graphicsPipeline->blendSource = configInfo.blendSource;
-        graphicsPipeline->blendDestination = configInfo.blendDestination;
-        graphicsPipeline->alphaBlendSource = configInfo.alphaBlendSource;
-        graphicsPipeline->alphaBlendDestination = configInfo.alphaBlendDestination;
+//        graphicsPipeline->blendSource = configInfo.blendSource;
+//        graphicsPipeline->blendDestination = configInfo.blendDestination;
+//        graphicsPipeline->alphaBlendSource = configInfo.alphaBlendSource;
+//        graphicsPipeline->alphaBlendDestination = configInfo.alphaBlendDestination;
 
         for (int i = 0; i < 8; ++i)
         {
@@ -98,10 +98,10 @@ namespace lke
         configInfo.stencilReadMask = 0xff;
         configInfo.stencilWriteMask = 0xff;
 
-        configInfo.blendSource = Kore::Graphics5::BlendOne;
-        configInfo.blendDestination = Kore::Graphics5::BlendZero;
-        configInfo.alphaBlendSource = Kore::Graphics5::BlendOne;
-        configInfo.alphaBlendDestination = Kore::Graphics5::BlendZero;
+//        configInfo.blendSource = Kore::Graphics5::BlendOne;
+//        configInfo.blendDestination = Kore::Graphics5::BlendZero;
+//        configInfo.alphaBlendSource = Kore::Graphics5::BlendOne;
+//        configInfo.alphaBlendDestination = Kore::Graphics5::BlendZero;
 
         for (int i = 0; i < 8; ++i)
         {
@@ -122,7 +122,7 @@ namespace lke
 
     void LkePipeline::enableAlphaBlending(PipelineConfigInfo &configInfo)
     {
-        configInfo.blendSource = Kore::Graphics5::SourceAlpha;
-        configInfo.blendDestination = Kore::Graphics5::InverseSourceAlpha;
+//        configInfo.blendSource = Kore::Graphics5::SourceAlpha;
+//        configInfo.blendDestination = Kore::Graphics5::InverseSourceAlpha;
     }
 }

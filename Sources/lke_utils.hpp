@@ -4,6 +4,8 @@
 #include <Kore/Math/Matrix.h>
 
 #include <functional>
+#include <streambuf>
+#include <istream>
 
 namespace lke
 {
@@ -11,6 +13,19 @@ struct LkeExtent2D
 {
     u_int32_t width = 0;
     u_int32_t height = 0;
+};
+
+struct membuf: std::streambuf {
+    membuf(char const* base, size_t size) {
+        char* p(const_cast<char*>(base));
+        this->setg(p, p, p + size);
+    }
+};
+struct imemstream: virtual membuf, std::istream {
+    imemstream(char const* base, size_t size)
+        : membuf(base, size)
+        , std::istream(static_cast<std::streambuf*>(this)) {
+    }
 };
 
 class LkeUtils
