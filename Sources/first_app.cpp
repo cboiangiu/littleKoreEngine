@@ -15,6 +15,8 @@ namespace lke
 FirstApp::FirstApp()
 {
     loadGameObjects();
+    viewerObject.transform.translation = {0.f,10.f,-15.f};
+    viewerObject.transform.rotation = {.7f,0.f,0.f};
 }
 
 FirstApp::~FirstApp()
