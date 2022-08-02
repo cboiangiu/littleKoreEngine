@@ -14,5 +14,6 @@ struct FrameInfo
     Kore::Graphics5::CommandList* commandList;
     LkeCamera& camera;
     LkeGameObject::Map& gameObjects;
+    LkeGameObject& touchGamepadObject;
 };
 }

@@ -33,6 +33,8 @@ public:
         std::vector<uint32_t> indices{};
 
         void loadModel(const std::string& filepath);
+        void loadModelFromBuffers(const std::vector<Vertex>& vertices,
+                                 const std::vector<uint32_t>& indices);
     };
 
     LkeModel(const LkeModel::Builder& builder);
@@ -42,7 +44,9 @@ public:
     LkeModel& operator=(const LkeModel&) = delete;
 
     static std::unique_ptr<LkeModel> createModelFromFile(const std::string& filepath);
-
+    static std::unique_ptr<LkeModel> createFromBuffers(const std::vector<Vertex>& vertices,
+                                                       const std::vector<uint32_t>& indices);
+    
     void bind(Kore::Graphics5::CommandList* commandList);
     void draw(Kore::Graphics5::CommandList* commandList);
 

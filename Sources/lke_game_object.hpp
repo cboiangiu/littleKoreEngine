@@ -10,7 +10,6 @@
 
 namespace lke
 {
-
 struct TransformComponent
 {
     Kore::vec3 translation{};
@@ -21,6 +20,19 @@ struct TransformComponent
     // Rotations correspond to Tait-bryan angles of Y(1), X(2), Z(3)
     // https://en.wikipedia.org/wiki/Euler_angles#Rotation_matrix
     Kore::mat4 mat4();
+};
+
+struct JoystickComponent
+{
+    Kore::vec2 background1Position{};
+    Kore::vec2 stick1Position{};
+    float background1Radius{};
+    float stick1Radius{};
+    
+    Kore::vec2 background2Position{};
+    Kore::vec2 stick2Position{};
+    float background2Radius{};
+    float stick2Radius{};
 };
 
 class LkeGameObject
@@ -47,6 +59,7 @@ public:
 
     Kore::vec3 color{};
     TransformComponent transform{};
+    JoystickComponent joystick{};
 
     // Optional pointer components
     std::shared_ptr<LkeModel> model{};

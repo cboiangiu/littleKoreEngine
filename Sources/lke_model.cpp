@@ -12,14 +12,30 @@
 
 namespace std
 {
+//template <>
+//struct hash<Kore::vec3>
+//{
+//    size_t operator()(Kore::vec3 const& vec3) const
+//    {
+//        std::size_t seed = 3;
+//        for(int i = 0; i < 3; ++i) {
+//          auto x = vec3[i];
+//          x = ((x >> 16) ^ x) * 0x45d9f3b;
+//          x = ((x >> 16) ^ x) * 0x45d9f3b;
+//          x = (x >> 16) ^ x;
+//          seed ^= x + 0x9e3779b9 + (seed << 6) + (seed >> 2);
+//        }
+//        return seed;
+//    }
+//};
+
 template <>
 struct hash<lke::LkeModel::Vertex>
 {
     size_t operator()(lke::LkeModel::Vertex const& vertex) const
     {
         size_t seed = 0;
-        //      lke::LkeUtils::hashCombine(seed, vertex.position, vertex.color, vertex.normal,
-        //      vertex.uv);
+//              lke::LkeUtils::hashCombine(seed, vertex.position, vertex.color);
         return seed;
     }
 };
@@ -27,7 +43,6 @@ struct hash<lke::LkeModel::Vertex>
 
 namespace lke
 {
-
 LkeModel::LkeModel(const LkeModel::Builder& builder)
 {
     createVertexBuffers(builder.vertices);
@@ -44,6 +59,14 @@ std::unique_ptr<LkeModel> LkeModel::createModelFromFile(const std::string& filep
 {
     Builder builder{};
     builder.loadModel(filepath);
+    return std::make_unique<LkeModel>(builder);
+}
+
+std::unique_ptr<LkeModel> LkeModel::createFromBuffers(const std::vector<Vertex>& vertices,
+                                                      const std::vector<uint32_t>& indices)
+{
+    Builder builder{};
+    builder.loadModelFromBuffers(vertices, indices);
     return std::make_unique<LkeModel>(builder);
 }
 
@@ -171,5 +194,15 @@ void LkeModel::Builder::loadModel(const std::string& filepath)
             indices.push_back(uniqueVertices[vertex]);
         }
     }
+}
+
+void LkeModel::Builder::loadModelFromBuffers(const std::vector<Vertex>& vertices,
+                                             const std::vector<uint32_t>& indices)
+{
+    this->vertices.clear();
+    this->indices.clear();
+    
+    this->vertices = vertices;
+    this->indices = indices;
 }
 }

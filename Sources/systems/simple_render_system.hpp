@@ -21,11 +21,16 @@ public:
     void renderGameObjects(FrameInfo& frameInfo);
 
 private:
-    void createPipelineLayout();
-    void createPipeline();
+    void createPipelines();
 
     std::unique_ptr<LkePipeline> lkePipeline;
+    std::unique_ptr<LkePipeline> lkePipelineTouchGamepad;
 
-    Kore::Graphics5::ConstantBuffer* constantBuffer;
+    Kore::Graphics5::ConstantBuffer* modelConstantBuffer;
+    Kore::Graphics5::ConstantBuffer* dataConstantBuffer;
+    Kore::Graphics5::ConstantBuffer* dataBackgroundConstantBuffer;
+    
+    Kore::Graphics5::ConstantBuffer* data2ConstantBuffer;
+    Kore::Graphics5::ConstantBuffer* data2BackgroundConstantBuffer;
 };
 }

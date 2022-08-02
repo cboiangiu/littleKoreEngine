@@ -31,7 +31,7 @@ void LkeRenderer::recreateFrameBuffers()
     for (int i = 0; i < 2; ++i)
     {
         frameBuffers[i] = new Kore::Graphics5::RenderTarget(frameBufferExtent.width,
-            frameBufferExtent.height, 16, false, Kore::Graphics5::Target32Bit, -1,
+            frameBufferExtent.height, 16, true, Kore::Graphics5::Target32Bit, -1,
             -i - 1 /* hack in an index for backbuffer render targets */);
     }
 }
@@ -57,8 +57,11 @@ Kore::Graphics5::CommandList* LkeRenderer::beginFrame()
 {
     assert(!isFrameStarted && "Can't call beginFrame while already in progress");
 
-    // FIXME: check if should recreate framebuffers
-
+    if(lkeWindow.wasWindowResized()) {
+        recreateFrameBuffers();
+        lkeWindow.setResizedFalse();
+    }
+    
     isFrameStarted = true;
 
     Kore::Graphics5::begin(frameBuffers[currentFrameBufferIndex]);
@@ -97,8 +100,9 @@ void LkeRenderer::beginFrameBufferRenderPass(Kore::Graphics5::CommandList* comma
 
     commandList->clear(frameBuffers[currentFrameBufferIndex], Kore::Graphics5::ClearColorFlag,
         LkeUtils::convertColor(0.1f, 1.0f, 1.0f, 1.0f), 1.0f, 0);
-    commandList->viewport(0, 0, frameBufferExtent.width, frameBufferExtent.height);
-    commandList->scissor(0, 0, frameBufferExtent.width, frameBufferExtent.height);
+        // FIXME: fix here
+//    commandList->viewport(0, 0, frameBufferExtent.width, frameBufferExtent.height);
+//    commandList->scissor(0, 0, frameBufferExtent.width, frameBufferExtent.height);
 }
 
 void LkeRenderer::endFrameBufferRenderPass(Kore::Graphics5::CommandList* commandList)

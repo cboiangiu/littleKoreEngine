@@ -41,11 +41,16 @@ private:
     static void updateCallback();
     static void keyDownCallback(Kore::KeyCode keyCode);
     static void keyUpCallback(Kore::KeyCode keyCode);
+    static void pauseCallback();
+    static void resumeCallback();
+    static void resizeCallback(int x, int y, void *data);
 
     void loadGameObjects();
     void update();
+    
+    bool pause = false;
 
-    LkeWindow lkeWindow{ WIDTH, HEIGHT, "Hello Kode!" };
+    LkeWindow lkeWindow{ WIDTH, HEIGHT, "Hello Kode!", resizeCallback };
     LkeRenderer lkeRenderer{ lkeWindow };
 
     // note: order of declarations matters
@@ -54,6 +59,7 @@ private:
     SimpleRenderSystem simpleRenderSystem;
     LkeCamera camera{};
     LkeGameObject viewerObject = LkeGameObject::createGameObject();
+    LkeGameObject touchGamepadObject = LkeGameObject::createGameObject();
     KeyboardMovementController cameraController{};
 
     std::chrono::time_point<std::chrono::high_resolution_clock> currentTime;

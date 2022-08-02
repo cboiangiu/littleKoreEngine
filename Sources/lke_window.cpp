@@ -8,10 +8,11 @@
 namespace lke
 {
 
-LkeWindow::LkeWindow(int w, int h, std::string name)
+LkeWindow::LkeWindow(int w, int h, std::string name, void (*callback)(int x, int y, void *data))
     : width{ w }
     , height{ h }
     , windowName{ name }
+    , framebufferResizeCallback { callback }
 {
     initWindow();
 }
@@ -27,12 +28,14 @@ void LkeWindow::initWindow()
     windowOptions.title = windowName.c_str();
     windowOptions.width = width;
     windowOptions.height = height;
-    windowOptions.windowFeatures = 0; // disable resize
+//    windowOptions.windowFeatures = 0; // disable resize
 
     Kore::FramebufferOptions framebufferOptions;
-    //    framebufferOptions.verticalSync = false;
+//    framebufferOptions.verticalSync = false;
 
     window = Kore::System::init(windowOptions.title, windowOptions.width, windowOptions.height,
         &windowOptions, &framebufferOptions);
+    
+    window->setResizeCallback(framebufferResizeCallback);
 }
 }
