@@ -23,10 +23,12 @@ struct PipelineConfigInfo
     int stencilReferenceValue;
     int stencilReadMask;
     int stencilWriteMask;
-    Kore::Graphics5::BlendingOperation blendSource;
-    Kore::Graphics5::BlendingOperation blendDestination;
-    Kore::Graphics5::BlendingOperation alphaBlendSource;
-    Kore::Graphics5::BlendingOperation alphaBlendDestination;
+    Kore::Graphics5::BlendingFactor blendSource;
+    Kore::Graphics5::BlendingFactor blendDestination;
+    Kore::Graphics5::BlendingFactor alphaBlendSource;
+    Kore::Graphics5::BlendingFactor alphaBlendDestination;
+    Kore::Graphics5::BlendingOperation blendOperation;
+    Kore::Graphics5::BlendingOperation alphaBlendOperation;
     bool colorWriteMaskRed[8]; // Per render target
     bool colorWriteMaskGreen[8];
     bool colorWriteMaskBlue[8];

@@ -13,6 +13,7 @@ LkeRenderer::LkeRenderer(LkeWindow& window)
 {
     recreateFrameBuffers();
     createCommandLists();
+    Kore::Graphics5::setAntialiasingSamples(4);
 }
 
 LkeRenderer::~LkeRenderer()
@@ -97,12 +98,10 @@ void LkeRenderer::beginFrameBufferRenderPass(Kore::Graphics5::CommandList* comma
     assert(commandList == commandLists[currentFrameIndex]
         && "Can't begin render pass on command buffer from a different frame");
 
-
     commandList->clear(frameBuffers[currentFrameBufferIndex], Kore::Graphics5::ClearColorFlag,
-        LkeUtils::convertColor(0.1f, 1.0f, 1.0f, 1.0f), 1.0f, 0);
-        // FIXME: fix here
-//    commandList->viewport(0, 0, frameBufferExtent.width, frameBufferExtent.height);
-//    commandList->scissor(0, 0, frameBufferExtent.width, frameBufferExtent.height);
+        LkeUtils::convertColor(0.2,0.3,0.6,1.0), 1.0f, 0);
+    commandList->viewport(0, 0, frameBufferExtent.width, frameBufferExtent.height);
+    commandList->scissor(0, 0, frameBufferExtent.width, frameBufferExtent.height);
 }
 
 void LkeRenderer::endFrameBufferRenderPass(Kore::Graphics5::CommandList* commandList)

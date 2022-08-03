@@ -4,6 +4,7 @@
 
 #include "lke_camera.hpp"
 #include "lke_game_object.hpp"
+#include "lke_utils.hpp"
 
 namespace lke
 {
@@ -15,5 +16,6 @@ struct FrameInfo
     LkeCamera& camera;
     LkeGameObject::Map& gameObjects;
     LkeGameObject& touchGamepadObject;
+    LkeExtent2D windowSize;
 };
 }

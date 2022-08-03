@@ -13,6 +13,16 @@ struct LkeExtent2D
 {
     u_int32_t width = 0;
     u_int32_t height = 0;
+    
+    bool operator==(const LkeExtent2D& other) const
+    {
+        return width == other.width && height == other.height;
+    }
+    
+    bool operator!=(const LkeExtent2D& other) const
+    {
+        return width != other.width || height != other.height;
+    }
 };
 
 struct membuf: std::streambuf {

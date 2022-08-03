@@ -1,6 +1,7 @@
 #include <Kore/System.h>
 #include <Kore/Window.h>
 #include <Kore/Log.h>
+#include <Kore/Display.h>
 
 #include "first_app.hpp"
 #include "lke_utils.hpp"
@@ -18,6 +19,14 @@ namespace lke
 
 FirstApp::FirstApp()
 {
+#if defined(KORE_ANDROID) || defined(KORE_IOS)
+    Kore::Display::init();
+    auto primaryDisplay = Kore::Display::primary();
+    auto width = primaryDisplay->width();
+    auto height = primaryDisplay->height();
+    
+    lkeWindow.resizeWindow(width, height);
+#endif
     loadGameObjects();
     viewerObject.transform.translation = {0.f,10.f,-15.f};
     viewerObject.transform.rotation = {.7f,0.f,0.f};
@@ -116,8 +125,8 @@ void FirstApp::update()
     float aspect = lkeRenderer.getAspectRatio();
     camera.setPerspectiveProjection(50.f * Kore::pi / 180, aspect, 0.1f, 500.f);
     
-    float joystickSmallRadius = 0.06 * lkeWindow.getExtent().height;
-    float joystickBigRadius = 0.16 * lkeWindow.getExtent().height;
+    float joystickSmallRadius = 0.06 * Kore::min(lkeWindow.getExtent().width, lkeWindow.getExtent().height);
+    float joystickBigRadius = 0.16 * Kore::min(lkeWindow.getExtent().width, lkeWindow.getExtent().height);
     {
         Kore::vec2 center = {lkeWindow.getExtent().width * .22f, lkeWindow.getExtent().height * .74f};
         touchGamepadObject.joystick.background1Position = center;
@@ -136,7 +145,7 @@ void FirstApp::update()
     if (auto commandList = lkeRenderer.beginFrame())
     {
         int frameIndex = lkeRenderer.getFrameIndex();
-        FrameInfo frameInfo{ frameIndex, frameTime, commandList, camera, gameObjects, touchGamepadObject };
+        FrameInfo frameInfo{ frameIndex, frameTime, commandList, camera, gameObjects, touchGamepadObject, lkeWindow.getExtent() };
 
         // update
         // nothing...
