@@ -6,6 +6,7 @@
 #include <functional>
 #include <streambuf>
 #include <istream>
+#include <algorithm>
 
 namespace lke
 {
@@ -41,6 +42,13 @@ struct imemstream: virtual membuf, std::istream {
 class LkeUtils
 {
 public:
+    static float smoothstep(float edge0, float edge1, float x) {
+        // Scale, bias and saturate x to 0..1 range
+        x = Kore::clamp((x - edge0) / (edge1 - edge0), 0.0f, 1.0f);
+        // Evaluate polynomial
+        return x * x * (3 - 2 * x);
+    }
+    
     static unsigned int convertColor(float r, float g, float b, float a)
     {
         int red = Kore::clamp((int)Kore::floor(r * 256.0), 0, 255);

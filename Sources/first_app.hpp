@@ -1,6 +1,7 @@
 #pragma once
 
 #include <Kore/Input/Keyboard.h>
+#include <Kore/Math/Vector.h>
 
 #include "keyboard_movement_controller.hpp"
 #include "lke_game_object.hpp"
@@ -13,6 +14,7 @@
 #include <memory>
 #include <vector>
 #include <set>
+#include <map>
 #include <chrono>
 
 namespace lke
@@ -44,6 +46,9 @@ private:
     static void pauseCallback();
     static void resumeCallback();
     static void resizeCallback(int x, int y, void *data);
+    static void touchStartCallback(int index, int x, int y);
+    static void touchMoveCallback(int index, int x, int y);
+    static void touchEndCallback(int index, int x, int y);
 
     void loadGameObjects();
     void update();
@@ -65,5 +70,6 @@ private:
     std::chrono::time_point<std::chrono::high_resolution_clock> currentTime;
     
     std::set<Kore::KeyCode> keysPressed;
+    std::map<int, Kore::vec2> fingersPressed;
 };
 }

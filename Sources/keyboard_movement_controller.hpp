@@ -27,6 +27,7 @@ namespace lke
         };
 
         void moveInPlaneXZ(std::set<Kore::KeyCode> keyCodes, float dt, LkeGameObject &gameObject);
+        void moveInPlaneXZFromGamepad(Kore::vec2 moveAxis, Kore::vec2 lookAxis, float dt, LkeGameObject &gameObject);
 
         KeyMappings keys{};
         float moveSpeed{40.f};

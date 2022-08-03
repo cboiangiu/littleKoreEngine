@@ -2,6 +2,7 @@
 #include <Kore/Window.h>
 #include <Kore/Log.h>
 #include <Kore/Display.h>
+#include <Kore/Input/Surface.h>
 
 #include "first_app.hpp"
 #include "lke_utils.hpp"
@@ -43,6 +44,9 @@ void FirstApp::run()
     Kore::System::setCallback(updateCallback);
     Kore::System::setPauseCallback(pauseCallback);
     Kore::System::setResumeCallback(resumeCallback);
+    Kore::Surface::the()->TouchStart = touchStartCallback;
+    Kore::Surface::the()->Move = touchMoveCallback;
+    Kore::Surface::the()->TouchEnd = touchEndCallback;
     // set more callbacks for key events here
     currentTime = std::chrono::high_resolution_clock::now();
     Kore::System::start();
@@ -76,8 +80,24 @@ void FirstApp::resumeCallback()
 
 void FirstApp::resizeCallback(int x, int y, void *data)
 {
-    Kore::log(Kore::LogLevel::Info, (std::to_string(x) + " " + std::to_string(y)).c_str());
     FirstApp::instance()->lkeWindow.resizeWindow(x,y);
+}
+
+void FirstApp::touchStartCallback(int index, int x, int y)
+{
+    FirstApp::instance()->fingersPressed[index].x() = x+0.f;
+    FirstApp::instance()->fingersPressed[index].y() = y+0.f;
+}
+
+void FirstApp::touchMoveCallback(int index, int x, int y)
+{
+    FirstApp::instance()->fingersPressed[index].x() = x+0.f;
+    FirstApp::instance()->fingersPressed[index].y() = y+0.f;
+}
+
+void FirstApp::touchEndCallback(int index, int x, int y)
+{
+    FirstApp::instance()->fingersPressed.erase(index);
 }
 
 void FirstApp::loadGameObjects()
@@ -125,23 +145,76 @@ void FirstApp::update()
     float aspect = lkeRenderer.getAspectRatio();
     camera.setPerspectiveProjection(50.f * Kore::pi / 180, aspect, 0.1f, 500.f);
     
+#if defined(KORE_ANDROID) || defined(KORE_IOS)
     float joystickSmallRadius = 0.06 * Kore::min(lkeWindow.getExtent().width, lkeWindow.getExtent().height);
     float joystickBigRadius = 0.16 * Kore::min(lkeWindow.getExtent().width, lkeWindow.getExtent().height);
+    
+    auto joystick1Axis = Kore::vec2{};
+    auto joystick2Axis = Kore::vec2{};
     {
         Kore::vec2 center = {lkeWindow.getExtent().width * .22f, lkeWindow.getExtent().height * .74f};
+        Kore::vec2 stickCenter = center;
+        
+        for(auto finger : fingersPressed)
+        {
+            auto distance = center.distance(finger.second);
+            if(distance < joystickBigRadius)
+            {
+                stickCenter = finger.second;
+
+                joystick1Axis.x() = LkeUtils::smoothstep(0.0, joystickBigRadius, Kore::abs(center.x() - stickCenter.x()));
+                joystick1Axis.y() = LkeUtils::smoothstep(0.0, joystickBigRadius, Kore::abs(center.y() - stickCenter.y()));
+                if(stickCenter.x() - center.x() < 0)
+                {
+                    joystick1Axis.x() *= -1.f;
+                }
+                if(center.y() - stickCenter.y() < 0)
+                {
+                    joystick1Axis.y() *= -1.f;
+                }
+                Kore::log(Kore::LogLevel::Info, ("Touch Move: " + std::to_string(0) + " " + std::to_string(joystick1Axis.x()) + " " + std::to_string(joystick1Axis.y())).c_str());
+            }
+        }
+        
         touchGamepadObject.joystick.background1Position = center;
         touchGamepadObject.joystick.background1Radius = joystickBigRadius;
-        touchGamepadObject.joystick.stick1Position = center - Kore::vec2{joystickBigRadius, joystickBigRadius} / 2;
+        touchGamepadObject.joystick.stick1Position = stickCenter;
         touchGamepadObject.joystick.stick1Radius = joystickSmallRadius;
     }
     {
         Kore::vec2 center = {lkeWindow.getExtent().width * .78f, lkeWindow.getExtent().height * .74f};
+        Kore::vec2 stickCenter = center;
+        
+        for(auto finger : fingersPressed)
+        {
+            auto distance = center.distance(finger.second);
+            if(distance < joystickBigRadius)
+            {
+                stickCenter = finger.second;
+
+                joystick2Axis.x() = LkeUtils::smoothstep(0.0, joystickBigRadius, Kore::abs(center.x() - stickCenter.x()));
+                joystick2Axis.y() = LkeUtils::smoothstep(0.0, joystickBigRadius, Kore::abs(center.y() - stickCenter.y()));
+                if(stickCenter.x() - center.x() < 0)
+                {
+                    joystick2Axis.x() *= -1.f;
+                }
+                if(center.y() - stickCenter.y() < 0)
+                {
+                    joystick2Axis.y() *= -1.f;
+                }
+                Kore::log(Kore::LogLevel::Info, ("Touch Move: " + std::to_string(1) + " " + std::to_string(joystick2Axis.x()) + " " + std::to_string(joystick2Axis.y())).c_str());
+            }
+        }
+        
         touchGamepadObject.joystick.background2Position = center;
         touchGamepadObject.joystick.background2Radius = joystickBigRadius;
-        touchGamepadObject.joystick.stick2Position = center;
+        touchGamepadObject.joystick.stick2Position = stickCenter;
         touchGamepadObject.joystick.stick2Radius = joystickSmallRadius;
     }
-
+    
+    cameraController.moveInPlaneXZFromGamepad(joystick1Axis, joystick2Axis, frameTime, viewerObject);
+#endif
+    
     if (auto commandList = lkeRenderer.beginFrame())
     {
         int frameIndex = lkeRenderer.getFrameIndex();

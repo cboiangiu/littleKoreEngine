@@ -72,8 +72,9 @@ namespace lke
             obj.model->draw(frameInfo.commandList);
         }
         
+#if defined(KORE_ANDROID) || defined(KORE_IOS)
         {
-            Kore::vec3 colorSmall = {1.0,0.0,1.0};
+            Kore::vec3 colorSmall = {0.5,0.8,0.2};
             Kore::vec3 colorBig = {0.2,0.2,0.2};
             Kore::vec2 windowSize = {frameInfo.windowSize.width + 0.f, frameInfo.windowSize.height + 0.f};
             {
@@ -127,5 +128,6 @@ namespace lke
                 frameInfo.touchGamepadObject.model->draw(frameInfo.commandList);
             }
         }
+#endif
     }
 }
