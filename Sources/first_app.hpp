@@ -47,18 +47,16 @@ private:
     static void pauseCallback();
     static void resumeCallback();
     static void resizeCallback(int x, int y, void *data);
-    static void ppiChangedCallback(int ppi, void *data);
     static void touchStartCallback(int index, int x, int y);
     static void touchMoveCallback(int index, int x, int y);
     static void touchEndCallback(int index, int x, int y);
-    static void mouseMove(int windowId, int x, int y, int movementX, int movementY);
 
     void loadGameObjects();
     void update();
     
     bool pause = false;
 
-    LkeWindow lkeWindow{ WIDTH, HEIGHT, "Hello Kode!", resizeCallback, ppiChangedCallback };
+    LkeWindow lkeWindow{ WIDTH, HEIGHT, "Hello Kode!", resizeCallback };
     LkeRenderer lkeRenderer{ lkeWindow };
 
     // note: order of declarations matters

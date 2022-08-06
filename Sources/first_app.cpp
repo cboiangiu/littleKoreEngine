@@ -72,12 +72,9 @@ void FirstApp::run()
     Kore::Surface::the()->TouchStart = touchStartCallback;
     Kore::Surface::the()->Move = touchMoveCallback;
     Kore::Surface::the()->TouchEnd = touchEndCallback;
-    Kore::Mouse::the()->Move = mouseMove;
     // set more callbacks for key events here
     currentTime = std::chrono::high_resolution_clock::now();
     Kore::System::start();
-    
-
 }
 
 void FirstApp::updateCallback()
@@ -113,14 +110,6 @@ void FirstApp::resizeCallback(int x, int y, void *data)
     FirstApp::instance()->lkeWindow.resizeWindow(x,y);
 }
 
-void FirstApp::ppiChangedCallback(int ppi, void *data)
-{
-    // auto x = FirstApp::instance()->lkeWindow.getExtent().width * ppi;
-    // auto y = FirstApp::instance()->lkeWindow.getExtent().height * ppi;
-    // Kore::log(Kore::Info, (std::to_string(x) + " " + std::to_string(y)).c_str());
-    // FirstApp::instance()->lkeWindow.resizeWindow(x, y);
-}
-
 void FirstApp::touchStartCallback(int index, int x, int y)
 {
     FirstApp::instance()->fingersPressed[index].x() = x+0.f;
@@ -136,12 +125,6 @@ void FirstApp::touchMoveCallback(int index, int x, int y)
 void FirstApp::touchEndCallback(int index, int x, int y)
 {
     FirstApp::instance()->fingersPressed.erase(index);
-}
-
-void FirstApp::mouseMove(int windowId, int x, int y, int movementX, int movementY)
-{
-//    Kore::log(Kore::Info, std::to_string(x).c_str());
-//    FirstApp::instance()->latestMousePosition = Kore::vec2{x+0.f , y + 0.f};
 }
 
 void FirstApp::loadGameObjects()
@@ -257,7 +240,7 @@ void FirstApp::update()
     camera.setViewYXZ(viewerObject.transform.translation, viewerObject.transform.rotation);
 
     float aspect = lkeRenderer.getAspectRatio();
-    camera.setPerspectiveProjection(75.f * Kore::pi / 180, aspect, 0.1f, 500.f);
+    camera.setPerspectiveProjection(75.f * Kore::pi / 180, aspect, 0.1f, 1500.f);
 
     auto timeee = std::chrono::duration<float, std::chrono::milliseconds::period>(std::chrono::high_resolution_clock::now() - currentTime).count();
     auto timeaaaa = std::chrono::high_resolution_clock::now();
