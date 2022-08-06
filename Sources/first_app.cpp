@@ -3,6 +3,7 @@
 #include <Kore/Log.h>
 #include <Kore/Display.h>
 #include <Kore/Input/Surface.h>
+#include <Kore/Input/Mouse.h>
 
 #include "first_app.hpp"
 #include "lke_utils.hpp"
@@ -13,7 +14,7 @@
 #include <cassert>
 #include <stdexcept>
 #include <chrono>
-#include <thread>
+#include <future>
 
 namespace lke
 {
@@ -28,87 +29,6 @@ FirstApp::FirstApp()
     
     lkeWindow.resizeWindow(width, height);
 #endif
-    loadGameObjects();
-    viewerObject.transform.translation = {0.f,10.f,-15.f};
-    viewerObject.transform.rotation = {.7f,0.f,0.f};
-}
-
-FirstApp::~FirstApp()
-{
-}
-
-void FirstApp::run()
-{
-    Kore::Keyboard::the()->KeyDown = keyDownCallback;
-    Kore::Keyboard::the()->KeyUp = keyUpCallback;
-    Kore::System::setCallback(updateCallback);
-    Kore::System::setPauseCallback(pauseCallback);
-    Kore::System::setResumeCallback(resumeCallback);
-    Kore::Surface::the()->TouchStart = touchStartCallback;
-    Kore::Surface::the()->Move = touchMoveCallback;
-    Kore::Surface::the()->TouchEnd = touchEndCallback;
-    // set more callbacks for key events here
-    currentTime = std::chrono::high_resolution_clock::now();
-    Kore::System::start();
-}
-
-void FirstApp::updateCallback()
-{
-    FirstApp::instance()->update();
-}
-
-void FirstApp::keyDownCallback(Kore::KeyCode keyCode)
-{
-    FirstApp::instance()->keysPressed.insert(keyCode);
-}
-
-void FirstApp::keyUpCallback(Kore::KeyCode keyCode)
-{
-    FirstApp::instance()->keysPressed.erase(keyCode);
-}
-
-void FirstApp::pauseCallback()
-{
-    FirstApp::instance()->pause = true;
-    FirstApp::instance()->keysPressed.clear();
-}
-
-void FirstApp::resumeCallback()
-{
-    FirstApp::instance()->pause = false;
-}
-
-void FirstApp::resizeCallback(int x, int y, void *data)
-{
-    FirstApp::instance()->lkeWindow.resizeWindow(x,y);
-}
-
-void FirstApp::touchStartCallback(int index, int x, int y)
-{
-    FirstApp::instance()->fingersPressed[index].x() = x+0.f;
-    FirstApp::instance()->fingersPressed[index].y() = y+0.f;
-}
-
-void FirstApp::touchMoveCallback(int index, int x, int y)
-{
-    FirstApp::instance()->fingersPressed[index].x() = x+0.f;
-    FirstApp::instance()->fingersPressed[index].y() = y+0.f;
-}
-
-void FirstApp::touchEndCallback(int index, int x, int y)
-{
-    FirstApp::instance()->fingersPressed.erase(index);
-}
-
-void FirstApp::loadGameObjects()
-{
-    std::shared_ptr<LkeModel> lkeModel = LkeModel::createModelFromFile("models/cube.obj");
-    auto obj = LkeGameObject::createGameObject();
-    obj.model = lkeModel;
-    obj.transform.translation = {.0f, .0f, 2.5f};
-    obj.transform.scale = {3.f, 3.f, 3.f};
-    gameObjects.emplace(obj.getId(), std::move(obj));
-    
     // add touchGamepadObject model
     {
         std::vector<LkeModel::Vertex> vertices;
@@ -130,6 +50,122 @@ void FirstApp::loadGameObjects()
 
         touchGamepadObject.model = LkeModel::createFromBuffers(vertices, indices);
     }
+    viewerObject.transform.translation = {0.f,58.f,-50.f};
+    viewerObject.transform.rotation = {.7f,0.f,0.f};
+    
+    latestMousePosition = Kore::vec2{lkeWindow.getExtent().width / 2 * 1.f, lkeWindow.getExtent().height / 2 * 1.f};
+}
+
+FirstApp::~FirstApp()
+{
+}
+
+void FirstApp::run()
+{
+    Kore::Mouse::the()->lock(0);
+    std::future<void> result = std::async(std::launch::async, []{FirstApp::instance()->loadGameObjects();});
+    Kore::Keyboard::the()->KeyDown = keyDownCallback;
+    Kore::Keyboard::the()->KeyUp = keyUpCallback;
+    Kore::System::setCallback(updateCallback);
+    Kore::System::setPauseCallback(pauseCallback);
+    Kore::System::setResumeCallback(resumeCallback);
+    Kore::Surface::the()->TouchStart = touchStartCallback;
+    Kore::Surface::the()->Move = touchMoveCallback;
+    Kore::Surface::the()->TouchEnd = touchEndCallback;
+    Kore::Mouse::the()->Move = mouseMove;
+    // set more callbacks for key events here
+    currentTime = std::chrono::high_resolution_clock::now();
+    Kore::System::start();
+    
+
+}
+
+void FirstApp::updateCallback()
+{
+    FirstApp::instance()->update();
+}
+
+void FirstApp::keyDownCallback(Kore::KeyCode keyCode)
+{
+    FirstApp::instance()->keysPressed.insert(keyCode);
+}
+
+void FirstApp::keyUpCallback(Kore::KeyCode keyCode)
+{
+    FirstApp::instance()->keysPressed.erase(keyCode);
+}
+
+void FirstApp::pauseCallback()
+{
+    FirstApp::instance()->pause = true;
+    FirstApp::instance()->keysPressed.clear();
+    Kore::Mouse::the()->unlock();
+}
+
+void FirstApp::resumeCallback()
+{
+    FirstApp::instance()->pause = false;
+    Kore::Mouse::the()->lock(0);
+}
+
+void FirstApp::resizeCallback(int x, int y, void *data)
+{
+    FirstApp::instance()->lkeWindow.resizeWindow(x,y);
+}
+
+void FirstApp::ppiChangedCallback(int ppi, void *data)
+{
+    // auto x = FirstApp::instance()->lkeWindow.getExtent().width * ppi;
+    // auto y = FirstApp::instance()->lkeWindow.getExtent().height * ppi;
+    // Kore::log(Kore::Info, (std::to_string(x) + " " + std::to_string(y)).c_str());
+    // FirstApp::instance()->lkeWindow.resizeWindow(x, y);
+}
+
+void FirstApp::touchStartCallback(int index, int x, int y)
+{
+    FirstApp::instance()->fingersPressed[index].x() = x+0.f;
+    FirstApp::instance()->fingersPressed[index].y() = y+0.f;
+}
+
+void FirstApp::touchMoveCallback(int index, int x, int y)
+{
+    FirstApp::instance()->fingersPressed[index].x() = x+0.f;
+    FirstApp::instance()->fingersPressed[index].y() = y+0.f;
+}
+
+void FirstApp::touchEndCallback(int index, int x, int y)
+{
+    FirstApp::instance()->fingersPressed.erase(index);
+}
+
+void FirstApp::mouseMove(int windowId, int x, int y, int movementX, int movementY)
+{
+//    Kore::log(Kore::Info, std::to_string(x).c_str());
+//    FirstApp::instance()->latestMousePosition = Kore::vec2{x+0.f , y + 0.f};
+}
+
+void FirstApp::loadGameObjects()
+{
+    std::shared_ptr<LkeModel> lkeModel3 = LkeModel::createModelFromFile("models/floor.obj");
+    auto obj3 = LkeGameObject::createGameObject();
+    obj3.model = lkeModel3;
+    obj3.transform.translation = {.0f, .0f, .0f};
+    obj3.transform.scale = {3.f, 3.f, 3.f};
+    gameObjects.emplace(obj3.getId(), std::move(obj3));
+    
+    std::shared_ptr<LkeModel> lkeModel = LkeModel::createModelFromFile("models/colored_cube.obj");
+    auto obj = LkeGameObject::createGameObject();
+    obj.model = lkeModel;
+    obj.transform.translation = {.0f, .0f, 2.5f};
+    obj.transform.scale = {3.f, 3.f, 3.f};
+    gameObjects.emplace(obj.getId(), std::move(obj));
+    
+    std::shared_ptr<LkeModel> lkeModel2 = LkeModel::createModelFromFile("models/FinalBaseMesh.obj");
+    auto obj2 = LkeGameObject::createGameObject();
+    obj2.model = lkeModel2;
+    obj2.transform.translation = {.0f, .0f, 2.5f};
+    obj2.transform.scale = {1.f, 1.f, 1.f};
+    gameObjects.emplace(obj2.getId(), std::move(obj2));
 }
 
 void FirstApp::update()
@@ -138,12 +174,6 @@ void FirstApp::update()
     float frameTime
         = std::chrono::duration<float, std::chrono::seconds::period>(newTime - currentTime).count();
     currentTime = newTime;
-
-    cameraController.moveInPlaneXZ(keysPressed, frameTime, viewerObject);
-    camera.setViewYXZ(viewerObject.transform.translation, viewerObject.transform.rotation);
-
-    float aspect = lkeRenderer.getAspectRatio();
-    camera.setPerspectiveProjection(50.f * Kore::pi / 180, aspect, 0.1f, 500.f);
     
 #if defined(KORE_ANDROID) || defined(KORE_IOS)
     float joystickSmallRadius = 0.06 * Kore::min(lkeWindow.getExtent().width, lkeWindow.getExtent().height);
@@ -213,10 +243,28 @@ void FirstApp::update()
     }
     
     cameraController.moveInPlaneXZFromGamepad(joystick1Axis, joystick2Axis, frameTime, viewerObject);
+#else
+    Kore::Mouse::the()->setPosition(0, lkeWindow.getExtent().width / 2, lkeWindow.getExtent().height / 2);
+
+    auto mouseMove = Kore::vec2{(latestMousePosition.x() - (lkeWindow.getExtent().width / 2)) * 1.f, (latestMousePosition.y() - (lkeWindow.getExtent().height / 2)) * 1.f};
+    
+    latestMousePosition = Kore::vec2{lkeWindow.getExtent().width / 2 * 1.f, lkeWindow.getExtent().height / 2 * 1.f};
+    
+    cameraController.moveInPlaneXZFromMouse(mouseMove, frameTime, viewerObject);
+    cameraController.moveInPlaneXZ(keysPressed, frameTime, viewerObject);
 #endif
+    
+    camera.setViewYXZ(viewerObject.transform.translation, viewerObject.transform.rotation);
+
+    float aspect = lkeRenderer.getAspectRatio();
+    camera.setPerspectiveProjection(75.f * Kore::pi / 180, aspect, 0.1f, 500.f);
+
+    auto timeee = std::chrono::duration<float, std::chrono::milliseconds::period>(std::chrono::high_resolution_clock::now() - currentTime).count();
+    auto timeaaaa = std::chrono::high_resolution_clock::now();
     
     if (auto commandList = lkeRenderer.beginFrame())
     {
+        timeaaaa = std::chrono::high_resolution_clock::now();
         int frameIndex = lkeRenderer.getFrameIndex();
         FrameInfo frameInfo{ frameIndex, frameTime, commandList, camera, gameObjects, touchGamepadObject, lkeWindow.getExtent() };
 
@@ -229,9 +277,22 @@ void FirstApp::update()
         // order here matters
         simpleRenderSystem.renderGameObjects(frameInfo);
 
+
+        
         lkeRenderer.endFrameBufferRenderPass(commandList);
+        
         lkeRenderer.endFrame();
     }
+    
+    timeee += std::chrono::duration<float, std::chrono::milliseconds::period>(std::chrono::high_resolution_clock::now() - timeaaaa).count();
+    Kore::log(Kore::Info, ("FrameTime: " + std::to_string(timeee) + "ms").c_str());
+    
+#if !defined(KORE_ANDROID) && !defined(KORE_IOS)
+    auto mouseX = 0;
+    auto mouseY = 0;
+    Kore::Mouse::the()->getPosition(0, mouseX, mouseY);
+    latestMousePosition = Kore::vec2{mouseX + 0.f, mouseY + 0.f};
+#endif
     
     if (pause) {
         newTime = std::chrono::high_resolution_clock::now();

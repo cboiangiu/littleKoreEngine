@@ -8,11 +8,13 @@
 namespace lke
 {
 
-LkeWindow::LkeWindow(int w, int h, std::string name, void (*callback)(int x, int y, void *data))
+LkeWindow::LkeWindow(int w, int h, std::string name, void (*callback)(int x, int y, void *data),
+                     void (*callbackPpi)(int ppi, void *data))
     : width{ w }
     , height{ h }
     , windowName{ name }
     , framebufferResizeCallback { callback }
+    , ppiChangedCallback { callbackPpi }
 {
     initWindow();
 }

@@ -13,7 +13,8 @@ namespace lke
 class LkeWindow
 {
 public:
-    LkeWindow(int w, int h, std::string name, void (*callback)(int x, int y, void *data));
+    LkeWindow(int w, int h, std::string name, void (*callback)(int x, int y, void *data),
+              void (*callbackPpi)(int ppi, void *data));
     ~LkeWindow();
 
     LkeWindow(const LkeWindow&) = delete;
@@ -33,6 +34,7 @@ public:
 
 private:
     void (*framebufferResizeCallback)(int x, int y, void *data);
+    void (*ppiChangedCallback)(int ppi, void *data);
     void initWindow();
 
     int width;

@@ -24,13 +24,16 @@ namespace lke
             Kore::KeyCode lookRight = Kore::KeyCode::KeyRight;
             Kore::KeyCode lookUp = Kore::KeyCode::KeyUp;
             Kore::KeyCode lookDown = Kore::KeyCode::KeyDown;
+            Kore::KeyCode crouch = Kore::KeyCode::KeyControl;
         };
 
         void moveInPlaneXZ(std::set<Kore::KeyCode> keyCodes, float dt, LkeGameObject &gameObject);
         void moveInPlaneXZFromGamepad(Kore::vec2 moveAxis, Kore::vec2 lookAxis, float dt, LkeGameObject &gameObject);
+        void moveInPlaneXZFromMouse(Kore::vec2 mouseEvent, float dt, LkeGameObject &gameObject);
 
         KeyMappings keys{};
-        float moveSpeed{40.f};
+        float moveSpeed{136.f};
+        float moveSpeedCrouched{52.f};
         float lookSpeed{2.f};
 
     private:

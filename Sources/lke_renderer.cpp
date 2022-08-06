@@ -1,3 +1,5 @@
+#include <Kore/Log.h>
+
 #include "lke_renderer.hpp"
 
 // std
@@ -13,7 +15,6 @@ LkeRenderer::LkeRenderer(LkeWindow& window)
 {
     recreateFrameBuffers();
     createCommandLists();
-    Kore::Graphics5::setAntialiasingSamples(4);
 }
 
 LkeRenderer::~LkeRenderer()
@@ -32,7 +33,7 @@ void LkeRenderer::recreateFrameBuffers()
     for (int i = 0; i < 2; ++i)
     {
         frameBuffers[i] = new Kore::Graphics5::RenderTarget(frameBufferExtent.width,
-            frameBufferExtent.height, 16, true, Kore::Graphics5::Target32Bit, -1,
+            frameBufferExtent.height, 16, false, Kore::Graphics5::Target32Bit, -1,
             -i - 1 /* hack in an index for backbuffer render targets */);
     }
 }
@@ -65,13 +66,16 @@ Kore::Graphics5::CommandList* LkeRenderer::beginFrame()
     
     isFrameStarted = true;
 
+    auto timeaaaa = std::chrono::high_resolution_clock::now();
     Kore::Graphics5::begin(frameBuffers[currentFrameBufferIndex]);
-
+    auto timeee = std::chrono::duration<float, std::chrono::milliseconds::period>(std::chrono::high_resolution_clock::now() - timeaaaa).count();
+    Kore::log(Kore::Info, ("asdasd: " + std::to_string(timeee) + "ms").c_str());
+    
     commandLists[currentFrameIndex]->begin();
     commandLists[currentFrameIndex]->framebufferToRenderTargetBarrier(
         frameBuffers[currentFrameBufferIndex]);
     commandLists[currentFrameIndex]->setRenderTargets(&frameBuffers[currentFrameBufferIndex], 1);
-
+    
     return commandLists[currentFrameIndex];
 }
 
